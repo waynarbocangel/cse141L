@@ -2,13 +2,12 @@
 // Project Name:   CSE141L
 //
 	 
-module InstFetch(Reset,Start,Clk,BranchAbs,BranchRelEn,ALU_flag,Target,ProgCtr);
+module InstFetch(Reset,Start,Clk,BranchEn,ALU_flag,Target,ProgCtr);
 
   input         Reset,			   // reset, init, etc. -- force PC to 0 
                 Start,			   // begin next program in series
-                Clk,			   // PC can change on pos. edges only	
-								BranchAbs,   
-                BranchRelEn,	   // jump conditionally to Target + PC
+                Clk,			   // PC can change on pos. edges only
+				BranchEn,
                 ALU_flag;		   // flag from ALU, e.g. Zero, Carry, Overflow, Negative (from ARM)
   input  logic [9:0] Target;	   // jump ... "how high?"
   output logic [9:0] ProgCtr ;     // the program counter register itself
@@ -20,8 +19,8 @@ module InstFetch(Reset,Start,Clk,BranchAbs,BranchRelEn,ALU_flag,Target,ProgCtr);
 		  ProgCtr <= 0;				        // for first program; want different value for 2nd or 3rd
 		else if(Start)						// hold while start asserted; commence when released
 		  ProgCtr <= ProgCtr;
-		else if(BranchRelEn && ALU_flag)    // conditional relative jump
-		  ProgCtr <= Target + ProgCtr;
+		else if(ALU_flag && BranchEn)    // conditional relative jump
+		  ProgCtr <= (Target << 1) + ProgCtr;
 		else
 		  ProgCtr <= ProgCtr+'b1; 	        // default increment (no need for ARM/MIPS +4 -- why?)
 	end

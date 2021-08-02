@@ -55,7 +55,7 @@ class Parser{
 	public String parse(String assemblyString, int lineNumber){
 		String[] instructionComponents = assemblyString.split("\\W+");
 		if (instructionComponents[0].equals("bne")) {
-			return translateBranch(instructionComponents);
+			return translateBranch(instructionComponents, lineNumber);
 		} else if (instructionComponents[0].equals("st")) {
 			return translateSetSpecial(instructionComponents);
 		} else if (instructionComponents[0].equals("ls")) {
@@ -135,7 +135,7 @@ class Parser{
 		}
 	}
 
-	private String translateBranch(String[] components){
+	private String translateBranch(String[] components, int lineNumber){
 		if (components.length != 2){
 			return "Error Invalid Branch Instruction: all set instructions must have one parameter";
 		}
@@ -144,10 +144,7 @@ class Parser{
 		String parameter = components[1];
 		if (labelTracker.containsKey(parameter)){
 			Integer referencedLine = labelTracker.get(parameter);
-			if (parameterValue > 31 || parameterValue < -32){
-				return "Error Overflow in Branch Instruction: your parameter has overflowed";
-			}
-			parameter = "000000" + Integer.toBinaryString(referencedLine);
+			parameter = "000000" + Integer.toBinaryString(lineNumber - referencedLine);
 			parameter = parameter.substring(parameter.length() - 6);
 		} else {
 			return "Error Unspecified Label in Branch Instruction: the given label does not exist or has not been defined before this branch instruction";

@@ -6,14 +6,16 @@
 /* parameters are compile time directives 
        this can be an any-size reg_file: just override the params!
 */
-module RegFile (Clk,WriteEn,StFlag,RaddrA,RaddrB,Waddr,DataIn,DataOutA,DataOutB, S);
+module RegFile (Clk,WriteEn,StFlag,RaddrA,RaddrB,Waddr,DataIn,ALUIn,ALUOp,DataOutA,DataOutB,S);
   input                Clk,
                        WriteEn,
 					   StFlag;
-  input        [3:0] RaddrA,				  // address pointers
+  input        [2:0] RaddrA,				  // address pointers
                        RaddrB,
-                       Waddr;
-  input        [15:0] DataIn;
+                       Waddr,
+					   ALUOp;
+  input        [15:0] DataIn,
+  					  ALUIn;
   output logic [15:0] DataOutA;			  // showing two different ways to handle DataOutX, for
   output logic [15:0] DataOutB;
   output logic [1:0] S = 0;				  //   pedagogic reasons only;
@@ -34,8 +36,15 @@ end
 
 // sequential (clocked) writes 
 always_ff @ (posedge Clk) begin
-  	if (WriteEn)	                             // works just like data_memory writes
-    	Registers[Waddr] <= DataIn;
+  	if (WriteEn) begin
+		  if (ALUOp == 3'b100 || ALUOp == 3'b101) begin
+			  Registers[3'b111] <= ALUIn;
+			  Registers[3'b110] <= DataIn;
+		  end
+		  else begin
+			  Registers[Waddr] <= DataIn; 
+		  end
+	end	
 	if (StFlag)
 		S <= DataIn[1:0];
 end
