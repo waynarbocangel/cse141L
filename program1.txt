@@ -1,0 +1,15 @@
+st 2
+ls $1, 0
+st 0
+ls $1, 1
+ls $2, 2
+div $1, $2
+st 1
+add $0, 2
+st 3
+ls $6, 2
+add $0, 2
+st 1
+ls $6, 1
+ls $7, 2
+DONE

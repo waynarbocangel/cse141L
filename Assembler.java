@@ -63,6 +63,8 @@ class Parser{
 		} else if (instructionComponents[0].equals("add") || instructionComponents[0].equals("sub") 
 		|| instructionComponents[0].equals("div") || instructionComponents[0].equals("mult")) {
 			return translateArithmetic(instructionComponents);
+		} else if (instructionComponents[0].equals("DONE")) {
+			return "111111111";
 		} else {
 			labelTracker.put(instructionComponents[0], lineNumber);
 			return "";
