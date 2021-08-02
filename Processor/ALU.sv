@@ -26,7 +26,7 @@ module ALU(InputA,InputB,OP,Out1,Out2,Zero);
 			3'b011: Out1 = InputA - InputB; // SUB
 			3'b100: Out1 = InputA * InputB; // MULT
 			3'b101: begin					// DIV
-				while (DivisionCounter != 16) begin
+				while (DivisionCounter != 15) begin
 					Out2 = Out2 << 1;
 					Out2 = Out2 + Operand1[15];
 					Operand1 = Operand1 << 1;
@@ -38,14 +38,14 @@ module ALU(InputA,InputB,OP,Out1,Out2,Zero);
 					DivisionCounter = DivisionCounter + 1;
 				end
 				DivisionCounter = 0;
-				while (Out2[15] == 0 && DivisionCounter != 16) begin
+				while (Out2[15] == 0 && DivisionCounter != 15) begin
 					Out2 = Out2 << 1;
 					DivisionCounter = DivisionCounter + 1;
 				end
 				DivisionCounter = 0;
 				Operand1 = Out2;
 				Out2 = 0;
-				while (DivisionCounter != 8) begin
+				while (DivisionCounter != 7) begin
 					DivisionHolder = DivisionHolder << 1;
 					DivisionHolder = DivisionHolder + Operand1[15];
 					Operand1 = Operand1 << 1;

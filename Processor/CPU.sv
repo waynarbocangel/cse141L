@@ -80,6 +80,7 @@ module CPU(Reset, Start, Clk,Ack);
 	// Modify D = *Number of bits you use for each register*
 	RegFile RF1 (
 		.Clk    		(Clk)		  ,
+		.Reset	   (Reset),
 		.WriteEn   (RegWrite)    ,
 		.StFlag	   (Instruction[8:6] == 3'b001), 
 		.RaddrA    (Instruction[5:3]),         //concatenate with 0 to give us 4 bits
