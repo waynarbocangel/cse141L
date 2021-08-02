@@ -6,7 +6,7 @@
 /* parameters are compile time directives 
        this can be an any-size reg_file: just override the params!
 */
-module RegFile (Clk,WriteEn,StFlag,RaddrA,RaddrB,Waddr,DataIn,ALUIn,ALUOp,DataOutA,DataOutB,S);
+module RegFile (Clk,WriteEn,StFlag,RaddrA,RaddrB,Waddr,DataIn,ALUIn,ALUOp,DataOutA,DataOutB,Branch1,Branch2,LoadStore,S);
   input                Clk,
                        WriteEn,
 					   StFlag;
@@ -18,10 +18,13 @@ module RegFile (Clk,WriteEn,StFlag,RaddrA,RaddrB,Waddr,DataIn,ALUIn,ALUOp,DataOu
   					  ALUIn;
   output logic [15:0] DataOutA;			  // showing two different ways to handle DataOutX, for
   output logic [15:0] DataOutB;
+  output logic [15:0] Branch1;
+  output logic [15:0] Branch2;
+  output logic [15:0] LoadStore;
   output logic [1:0] S = 0;				  //   pedagogic reasons only;
 
 // W bits wide [W-1:0] and 2**4 registers deep 	 
-logic [15:0] Registers[3:0];	  // or just registers[16] if we know D=4 always
+logic [15:0] Registers[7:0];	  // or just registers[16] if we know D=4 always
 // combinational reads 
 /* can write always_comb in place of assign
     difference: assign is limited to one line of code, so
@@ -31,7 +34,10 @@ logic [15:0] Registers[3:0];	  // or just registers[16] if we know D=4 always
 always_comb
 begin
  DataOutA = Registers[RaddrA];	  
- DataOutB = Registers[RaddrB];    
+ DataOutB = Registers[RaddrB];
+ Branch1 = Registers[3];
+ Branch2 = Registers[4];
+ LoadStore = Registers[0];
 end
 
 // sequential (clocked) writes 

@@ -16,23 +16,26 @@ module DataMem(Clk,Reset,MemWrite,MemRead,Byte,DataAddress,DataIn,DataOut);
   logic [7:0] Buffer;
   integer i;
 
-  initial 
-	$readmemh("dataram_init.list", Core);
   
   always_comb begin         // reads are combinational
+	Buffer = 0;
+	DataOut = 0;
 	if (MemRead) begin
 		Buffer = Core[DataAddress];
 		if (Byte) begin
-			DataOut = {Buffer[7:0], DataIn[7:0]}
+			DataOut = {Buffer[7:0], DataIn[7:0]};
 		end
 		else begin
-			DataOut = {DataIn[15:8], Buffer[7:0]}
+			DataOut = {DataIn[15:8], Buffer[7:0]};
 		end
 	end
   end
   
   always_ff @ (posedge Clk)	begin
-    if(WriteEn) 
+	if (Reset) begin
+		for (i = 0; i < 256; i = i + 1) Core[i] <= 0;
+	end
+    else if(MemWrite) 
 		if (Byte) begin
 			Core[DataAddress] <= DataIn[15:8];
 		end

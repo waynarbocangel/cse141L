@@ -24,7 +24,7 @@ module CPU(Reset, Start, Clk,Ack);
 	logic [ 8:0] Instruction;   // our 9-bit instruction
 	logic [ 1:0] S;				// flag register
 	logic [ 2:0] ALUOp;  // out 3-bit opcode
-	logic [ 15:0] ReadA, ReadB;  // reg_file outputs
+	logic [ 15:0] ReadA, ReadB, Branch1, Branch2, LoadStore;  // reg_file outputs
 	logic [ 15:0] InA, InB, 	   // ALU operand inputs
 					ALU_out1, ALU_out2;       // ALU result
 	logic [ 15:0] RegWriteValue, // data in to reg file
@@ -49,7 +49,7 @@ module CPU(Reset, Start, Clk,Ack);
 	.Clk         (Clk     ) ,  // (Clk) is required in Verilog, optional in SystemVerilog
 	.BranchEn (BranchEn) ,  // branch enable
 	.ALU_flag	 (Zero    ) ,
-    .Target      (PCTarg  ) ,
+    .Target      (Instruction[5:0]) ,
 	.ProgCtr     (PgmCtr  )	   // program count = index to instruction memory
 	);	
 
@@ -78,7 +78,7 @@ module CPU(Reset, Start, Clk,Ack);
 	end
 	//Reg file
 	// Modify D = *Number of bits you use for each register*
-	RegFile #(.W(8),.D(3)) RF1 (
+	RegFile RF1 (
 		.Clk    		(Clk)		  ,
 		.WriteEn   (RegWrite)    ,
 		.StFlag	   (Instruction[8:6] == 3'b001), 
@@ -90,13 +90,16 @@ module CPU(Reset, Start, Clk,Ack);
 		.ALUIn	   (ALUData),
 		.DataOutA  (ReadA        ) , 
 		.DataOutB  (ReadB		 ),
+		.Branch1   (Branch1),
+		.Branch2   (Branch2),
+		.LoadStore (LoadStore),
 		.S 		   (S)
 	);
 	
 	
 	
-	assign InA = ReadA;						          // connect RF out to ALU in
-	assign InB = (!ALUSrc) ? ReadB : {13'b0000000000000, Instruction[2:0]};
+	assign InA = (BranchEn) ? Branch1 : ((MemRead || MemWrite) ? LoadStore : ReadA);						          // connect RF out to ALU in
+	assign InB = (!ALUSrc) ? ((BranchEn) ? Branch2 : ReadB) : {13'b0000000000000, Instruction[2:0]};
 	assign RegWriteValue = MemToReg ? MemReadValue : ALU_out1;  // 2:1 switch into reg_file
 
 ALU ALU1(

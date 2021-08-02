@@ -37,7 +37,7 @@ module InstROM (InstAddress, InstOut) ;
 // alternative expression
 //   need $readmemh or $readmemb to initialize all of the elements
   logic[8:0] inst_rom[(2**11)-1:0];
-  always_comb begin:
+  always_comb begin
 	InstOut = inst_rom[InstAddress];
   end
  
