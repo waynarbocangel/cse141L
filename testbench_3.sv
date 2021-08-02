@@ -6,7 +6,7 @@
 
 module test_bench_3;
 
-reg reset,  // Reset signal  
+logic reset,  // Reset signal  
     clk,    // system clock runs testbench and CPU
     start;  // request to CPU
 
@@ -22,28 +22,28 @@ wire done;  // acknowledge back from CPU
 
 
 // program 3 variables
-reg[7:0]  N;      				// number of inputs;
-reg[7:0]  Xnumbers[255:0];	    // x numbers;
-reg[7:0]  Ynumbers[255:0];	    // x numbers;
+logic[7:0]  N;      				// number of inputs;
+logic[7:0]  Xnumbers[255:0];	    // x numbers;
+logic[7:0]  Ynumbers[255:0];	    // x numbers;
 
-reg[15:0] result;	            // final result
+logic[15:0] result;	            // final result
 
 // program 3 desired values
 
-reg[15:0] real_result;	     // final correct result
+logic[15:0] real_result;	     // final correct result
 real quotientR;			    //  quotient in $real format
-reg[63:0] tmp;
-reg[63:0] quotient;
-reg [15:0] sum;
-reg [15:0] dividend;
-reg [7:0]  divisor;
-reg [15:0] numbers[255:0];
-reg [15:0] x_bar;
-reg [15:0] y_bar;
-integer i,x;
+logic[63:0] tmp;
+logic[63:0] quotient;
+logic [15:0] sum;
+logic [15:0] dividend;
+logic [7:0]  divisor;
+logic [15:0] numbers[255:0];
+logic [15:0] x_bar;
+logic [15:0] y_bar;
+int i,x;
 
 // clock -- controls all timing, data flow in hardware and test bench
-always begin
+always_comb begin
     #5 clk = ~clk;
 end
 
