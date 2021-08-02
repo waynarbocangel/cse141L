@@ -6,7 +6,7 @@
 
 module test_bench_1;
 
-reg reset,  // Reset signal  
+logic reset,  // Reset signal  
     clk,    // system clock runs testbench and CPU
     start;  // request to CPU
 
@@ -22,20 +22,20 @@ wire done;  // acknowledge back from CPU
 
 
 // program 1 variables
-reg[15:0] dividend;      // divident;
-reg[7:0]  divisor;	     // divisor;
-reg[23:0] result;	     // final result
+logic[15:0] dividend;      // divident;
+logic[7:0]  divisor;	     // divisor;
+logic[23:0] result;	     // final result
 
 // program 1 desired values
 
-reg[23:0] real_result;	     // final correct result
+logic[23:0] real_result;	     // final correct result
 real quotientR;			    //  quotient in $real format
-reg[63:0] tmp;
-reg[63:0] quotient;
+logic[63:0] tmp;
+logic[63:0] quotient;
 
 
 // clock -- controls all timing, data flow in hardware and test bench
-always begin
+always_comb begin
     #5 clk = ~clk;
 end
 
@@ -52,7 +52,7 @@ initial begin
     else 
         real_result = '1;
 
-    // ***change names of memeroy or its guts as needed***
+    // ***change names of memory or its guts as needed***
     dut.DM1.Core[0] = dividend[15:8];
     dut.DM1.Core[1] = dividend[7:0];
     dut.DM1.Core[2] = divisor;
