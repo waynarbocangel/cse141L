@@ -10,7 +10,7 @@ logic reset,  // Reset signal
     clk,    // system clock runs testbench and CPU
     start;  // request to CPU
 
-wire done;  // acknowledge back from CPU
+logic done;  // acknowledge back from CPU
 
 // ***** instantiate your top level design here *****
   CPU dut(

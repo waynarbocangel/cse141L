@@ -6,8 +6,9 @@
 /* parameters are compile time directives 
        this can be an any-size reg_file: just override the params!
 */
-module RegFile (Clk,WriteEn,StFlag,RaddrA,RaddrB,Waddr,DataIn,ALUIn,ALUOp,DataOutA,DataOutB,Branch1,Branch2,LoadStore,S);
+module RegFile (Clk,Reset,WriteEn,StFlag,RaddrA,RaddrB,Waddr,DataIn,ALUIn,ALUOp,DataOutA,DataOutB,Branch1,Branch2,LoadStore,S);
   input                Clk,
+					   Reset,
                        WriteEn,
 					   StFlag;
   input        [2:0] RaddrA,				  // address pointers
@@ -42,7 +43,7 @@ end
 
 // sequential (clocked) writes 
 always_ff @ (posedge Clk) begin
-  	if (WriteEn) begin
+  	if (WriteEn && !Reset) begin
 		  if (ALUOp == 3'b100 || ALUOp == 3'b101) begin
 			  Registers[3'b111] <= ALUIn;
 			  Registers[3'b110] <= DataIn;
@@ -51,8 +52,12 @@ always_ff @ (posedge Clk) begin
 			  Registers[Waddr] <= DataIn; 
 		  end
 	end	
-	if (StFlag)
+	if (StFlag && !Reset)
 		S <= DataIn[1:0];
+	if (Reset) begin
+		Registers[0] <= 0;
+		S <= 0;
+ 	end
 end
 
 endmodule
